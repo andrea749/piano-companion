@@ -21,6 +21,7 @@ import com.sample.ble.util.isNotifiable
 import com.sample.ble.util.isReadable
 import com.sample.ble.util.isWritable
 import com.sample.ble.util.isWritableWithoutResponse
+import com.sample.ble.util.parseMidiFile
 import com.sample.ble.util.printGattTable
 import com.sample.ble.util.toHexString
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -98,8 +99,8 @@ class BluetoothRequestScreenViewModel @Inject constructor(
                     val setNotif = gatt?.setCharacteristicNotification(it, true)
                 }
             }
-            ledChar?.let {
-                writeCharacteristic(it) }
+//            ledChar?.let {
+//                writeCharacteristic(it) }
 
         }
         // not really needed
@@ -215,13 +216,35 @@ class BluetoothRequestScreenViewModel @Inject constructor(
 
         bluetoothGatt?.let { gatt ->
             characteristic.writeType = writeType
-            characteristic.value = byteArrayOf(0x01)
-            try {
-                gatt.writeCharacteristic(characteristic)
-            } catch (_: SecurityException) {
-                Log.d("andrea", "security exception in writeChar")
+//            characteristic.value = byteArrayOf(0x01)
+            var start = 0
+            var end = 100
+            while (start < payload.size) {
+                if (end >= payload.size) {
+                    end = payload.size - 1
+                }
+                characteristic.value = payload.sliceArray(IntRange(start, end))
+//                characteristic.value = payload
+                try {
+                    gatt.writeCharacteristic(characteristic)
+                    start = end + 1
+                    end = start + 100
+                } catch (_: SecurityException) {
+                    Log.d("andrea", "security exception in writeChar")
+                }
             }
         } ?: error("Not connected to a BLE device!")
+    }
+
+    fun getAndWriteToChar(_context: Context) {
+        val bleGattCharacteristic : BluetoothGattCharacteristic? = getLedWriteCharacteristic(_context)
+        bleGattCharacteristic?.let {
+            val midiJson: String = parseMidiFile(_context)
+            val midiPayload: ByteArray = midiJson.encodeToByteArray()
+            Log.d("andrea", "midi payload")
+            Log.d("andrea", midiPayload.toString())
+            writeCharacteristic(bleGattCharacteristic,midiPayload)
+        }
     }
 
     private fun writeDescriptor(descriptor: BluetoothGattDescriptor, payload: ByteArray) {

@@ -51,9 +51,9 @@ fun BluetoothRequestScreen(
             )
         }
         Button(onClick = {
-                parseMidiFile(context)
+                vm.getAndWriteToChar(context)
             }) {
-                Text(text = "parse file!")
+                Text(text = "parse and send file!")
         }
         if (scanResults.value is UiState.Success) {
             ScanResult((scanResults.value as UiState.Success).list, vm = vm)

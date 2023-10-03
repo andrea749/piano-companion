@@ -37,7 +37,7 @@ object NumberSerializer : KSerializer<Number> {
 }
 
 
-fun parseMidiFile(context: Context, fileName: String = "no name.mid") {
+fun parseMidiFile(context: Context, fileName: String = "no name.mid"): String {
     val input = context.assets.open(fileName)
     val midiFile = MidiFile(input)
     val noteEvents: MutableList<MutableList<Number>> = mutableListOf()
@@ -65,6 +65,7 @@ fun parseMidiFile(context: Context, fileName: String = "no name.mid") {
     val song = Song(tempo, noteEvents, noteEvents.size)
     val json = Json.encodeToString(song)
     Log.d("andrea", json)
+    return json
 }
 
 
