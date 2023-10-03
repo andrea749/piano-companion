@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id ("kotlin-kapt")
     id ("dagger.hilt.android.plugin")
+    kotlin("plugin.serialization") version embeddedKotlinVersion
 }
 
 android {
@@ -82,4 +83,6 @@ dependencies {
 
     //Permissions
     implementation("com.google.accompanist:accompanist-permissions:0.21.1-beta")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }
