@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sample.ble.MainActivity
+import com.sample.ble.util.parseMidiFile
 import com.sample.ble.util.startBleScan
 import com.sample.ble.util.stopBleScan
 
@@ -48,6 +49,11 @@ fun BluetoothRequestScreen(
             Text(
                 text = if (context.isScanning) "Stop bluetooth scan" else "Start bluetooth scan"
             )
+        }
+        Button(onClick = {
+                parseMidiFile(context)
+            }) {
+                Text(text = "parse file!")
         }
         if (scanResults.value is UiState.Success) {
             ScanResult((scanResults.value as UiState.Success).list, vm = vm)

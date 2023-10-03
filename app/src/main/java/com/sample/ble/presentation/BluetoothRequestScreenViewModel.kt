@@ -204,7 +204,7 @@ class BluetoothRequestScreenViewModel @Inject constructor(
 
 // TODO: pass serialized json here
 //    fun writeCharacteristic(characteristic: BluetoothGattCharacteristic, payload: ByteArray) {
-    private fun writeCharacteristic(characteristic: BluetoothGattCharacteristic) {
+    private fun writeCharacteristic(characteristic: BluetoothGattCharacteristic, payload: ByteArray = byteArrayOf()) {
         val writeType = when {
             characteristic.isWritable() -> BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
             characteristic.isWritableWithoutResponse() -> {
