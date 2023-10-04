@@ -18,8 +18,11 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
+import java.util.Arrays
+import kotlin.math.ceil
 
 
+private const val BYTE_ARRAY_SIZE = 20
 @Serializable
 data class Song(val tempo: Float, val notes: MutableList<MutableList<@Serializable(with = NumberSerializer::class)Number>>, val numOfEvents: Int = notes.size)
 
@@ -37,7 +40,7 @@ object NumberSerializer : KSerializer<Number> {
 }
 
 
-fun parseMidiFile(context: Context, fileName: String = "no name.mid"): String {
+fun parseMidiFile(context: Context, fileName: String = "no name.mid"): Array<ByteArray> {
     val input = context.assets.open(fileName)
     val midiFile = MidiFile(input)
     val noteEvents: MutableList<MutableList<Number>> = mutableListOf()
@@ -63,10 +66,30 @@ fun parseMidiFile(context: Context, fileName: String = "no name.mid"): String {
         }
     }
     val song = Song(tempo, noteEvents, noteEvents.size)
-    val json = Json.encodeToString(song)
-    Log.d("andrea", json)
-    return json
+    val byteArray = Json.encodeToString(song).encodeToByteArray()
+    val allByteArrays = splitByteArray(byteArray)
+    Log.d("andrea", "returning byte arrays")
+    return allByteArrays
 }
+
+fun splitByteArray(byteArray: ByteArray): Array<ByteArray> {
+    val chunkSize = BYTE_ARRAY_SIZE
+    val numChunks = ceil(byteArray.size.toDouble()/chunkSize).toInt()
+    val allByteArrays: Array<ByteArray> = Array(numChunks) { ByteArray(20) }
+    var start = 0
+    var end = chunkSize
+    for (i in 0 until numChunks) {
+        if (end > byteArray.size) {
+            end = byteArray.size
+        }
+        allByteArrays[i] = byteArray.copyOfRange(start, end)
+        start = end
+        end = start + chunkSize
+    }
+    return allByteArrays
+}
+
+
 
 
 

@@ -42,6 +42,8 @@ class BluetoothRequestScreenViewModel @Inject constructor(
     val scanResultsFlow = _scanResultsFlow.asStateFlow()
     private val allResults = mutableListOf<ScanResult>()
     var bluetoothGatt: BluetoothGatt? = null
+    var payload: Array<ByteArray> = arrayOf()
+    var currByte = 0 // track which byte we are currently sending
 
     private val bluetoothGattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
@@ -138,10 +140,19 @@ class BluetoothRequestScreenViewModel @Inject constructor(
             characteristic: BluetoothGattCharacteristic,
             status: Int
         ) {
+            Log.d("andrea", "onCharWrite in VM")
             with(characteristic) {
                 when (status) {
                     BluetoothGatt.GATT_SUCCESS -> {
                         Log.i("BluetoothGattCallback", "Wrote to characteristic $uuid | value: ${value.toHexString()}")
+                        // send next bytes here
+                        if (currByte < payload.size-1) {
+                            currByte += 1
+                            writeCharacteristic(characteristic, payload)
+                            //writeCharacteristic()
+                        } else {
+                            Log.d("andrea", "should be done??")
+                        }
                     }
                     BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH -> {
                         Log.e("BluetoothGattCallback", "Write exceeded connection ATT MTU!")
@@ -205,7 +216,7 @@ class BluetoothRequestScreenViewModel @Inject constructor(
 
 // TODO: pass serialized json here
 //    fun writeCharacteristic(characteristic: BluetoothGattCharacteristic, payload: ByteArray) {
-    private fun writeCharacteristic(characteristic: BluetoothGattCharacteristic, payload: ByteArray = byteArrayOf()) {
+    private fun writeCharacteristic(characteristic: BluetoothGattCharacteristic, payload: Array<ByteArray>) {
         val writeType = when {
             characteristic.isWritable() -> BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
             characteristic.isWritableWithoutResponse() -> {
@@ -216,22 +227,13 @@ class BluetoothRequestScreenViewModel @Inject constructor(
 
         bluetoothGatt?.let { gatt ->
             characteristic.writeType = writeType
-//            characteristic.value = byteArrayOf(0x01)
-            var start = 0
-            var end = 100
-            while (start < payload.size) {
-                if (end >= payload.size) {
-                    end = payload.size - 1
-                }
-                characteristic.value = payload.sliceArray(IntRange(start, end))
+            characteristic.value = payload[currByte]
 //                characteristic.value = payload
-                try {
-                    gatt.writeCharacteristic(characteristic)
-                    start = end + 1
-                    end = start + 100
-                } catch (_: SecurityException) {
-                    Log.d("andrea", "security exception in writeChar")
-                }
+            try {
+                // move this into the onCharWrite callback
+                gatt.writeCharacteristic(characteristic)
+            } catch (_: SecurityException) {
+                Log.d("andrea", "security exception in writeChar")
             }
         } ?: error("Not connected to a BLE device!")
     }
@@ -239,11 +241,10 @@ class BluetoothRequestScreenViewModel @Inject constructor(
     fun getAndWriteToChar(_context: Context) {
         val bleGattCharacteristic : BluetoothGattCharacteristic? = getLedWriteCharacteristic(_context)
         bleGattCharacteristic?.let {
-            val midiJson: String = parseMidiFile(_context)
-            val midiPayload: ByteArray = midiJson.encodeToByteArray()
+//            val payload: Array<ByteArray> = parseMidiFile(_context)
+            payload = parseMidiFile(_context)
             Log.d("andrea", "midi payload")
-            Log.d("andrea", midiPayload.toString())
-            writeCharacteristic(bleGattCharacteristic,midiPayload)
+            writeCharacteristic(bleGattCharacteristic, payload)
         }
     }
 
@@ -302,7 +303,7 @@ class BluetoothRequestScreenViewModel @Inject constructor(
             } catch (e: SecurityException) {
                 Log.d("andrea", "secExcep @ disableNotif")
             }
-            if (disableNotif == false) {
+            if (!disableNotif) {
                 Log.e("ConnectionManager", "setCharacteristicNotification failed for ${characteristic.uuid}")
                 return
             }
