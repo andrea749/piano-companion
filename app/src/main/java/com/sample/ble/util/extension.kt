@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.sample.ble.MainActivity
 import com.sample.ble.MainActivity.Companion.RUNTIME_PERMISSION_REQUEST_CODE
+import com.sample.ble.MainActivity.Companion.ENABLE_MICROPHONE_REQUEST_CODE
 import com.sample.ble.R
 import java.util.UUID
 
@@ -23,27 +24,38 @@ fun Context.hasPermission(permissionType: String): Boolean {
     return ContextCompat.checkSelfPermission(this, permissionType) ==
             PackageManager.PERMISSION_GRANTED
 }
-fun Context.hasRequiredRuntimePermissions(): Boolean {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        hasPermission(Manifest.permission.BLUETOOTH_SCAN) &&
-                hasPermission(Manifest.permission.BLUETOOTH_CONNECT) &&
-                hasPermission(Manifest.permission.RECORD_AUDIO)
-    } else {
-        hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
-                hasPermission(Manifest.permission.RECORD_AUDIO)
+fun Context.hasRequiredRuntimePermissions(requestCode: Int): Boolean {
+    return when(requestCode) {
+        RUNTIME_PERMISSION_REQUEST_CODE -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                hasPermission(Manifest.permission.BLUETOOTH_SCAN) &&
+                        hasPermission(Manifest.permission.BLUETOOTH_CONNECT)
+            } else {
+                hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+        ENABLE_MICROPHONE_REQUEST_CODE -> {
+            hasPermission(Manifest.permission.RECORD_AUDIO)
+        }
+        else -> throw IllegalStateException("incorrect request code")
     }
 }
 
-fun Activity.requestRelevantRuntimePermissions() {
-    if (hasRequiredRuntimePermissions()) { return }
-    when {
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.S -> {
-            requestLocationPermission(this)
-            requestMicrophonePermission(this)
+fun Activity.requestRelevantRuntimePermissions(requestCode: Int) {
+    if (hasRequiredRuntimePermissions(requestCode)) { return }
+    when (requestCode) {
+        RUNTIME_PERMISSION_REQUEST_CODE -> {
+            when {
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.S -> {
+                    requestLocationPermission(this)
 
+                }
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                    requestBluetoothPermissions(this)
+                }
+            }
         }
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            requestBluetoothPermissions(this)
+        ENABLE_MICROPHONE_REQUEST_CODE -> {
             requestMicrophonePermission(this)
         }
     }
@@ -59,7 +71,7 @@ fun requestMicrophonePermission(activity: Activity) {
                 ActivityCompat.requestPermissions(
                     activity,
                     arrayOf(Manifest.permission.RECORD_AUDIO),
-                    RUNTIME_PERMISSION_REQUEST_CODE
+                    ENABLE_MICROPHONE_REQUEST_CODE
                 )
             }
         }.show()
@@ -109,9 +121,9 @@ fun requestBluetoothPermissions(activity: Activity) {
 fun MainActivity.startBleScan() {
     Log.d("sammy", "startBleScan")
 
-    if (!this.hasRequiredRuntimePermissions()) {
+    if (!this.hasRequiredRuntimePermissions(RUNTIME_PERMISSION_REQUEST_CODE)) {
         Log.d("sammy", "does Not have required Runtime Permission")
-        this.requestRelevantRuntimePermissions()
+        this.requestRelevantRuntimePermissions(RUNTIME_PERMISSION_REQUEST_CODE)
     } else {
         Log.d("sammy", "YES it has required Runtime Permission")
         if (ActivityCompat.checkSelfPermission(
@@ -142,6 +154,12 @@ fun MainActivity.stopBleScan() {
     }
     bleScanner.stopScan(scanCallback)
     isScanning = false
+}
+
+fun MainActivity.checkAudioPermission() {
+    if (!this.hasRequiredRuntimePermissions(ENABLE_MICROPHONE_REQUEST_CODE)) {
+        requestRelevantRuntimePermissions(ENABLE_MICROPHONE_REQUEST_CODE)
+    }
 }
 
 fun BluetoothGatt.printGattTable() {

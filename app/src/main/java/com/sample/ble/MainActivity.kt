@@ -1,6 +1,7 @@
 package com.sample.ble
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -20,6 +21,7 @@ import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import com.sample.ble.presentation.Navigation
 import com.sample.ble.ui.theme.BleTheme
+import com.sample.ble.util.hasPermission
 import com.sample.ble.util.hasRequiredRuntimePermissions
 import com.sample.ble.util.requestRelevantRuntimePermissions
 import com.sample.ble.util.startBleScan
@@ -57,13 +59,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun promptEnableBluetooth() {
         if (!bluetoothAdapter.isEnabled) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+            if (!hasPermission(Manifest.permission.BLUETOOTH_CONNECT) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
             ) {
                 return
             }
@@ -90,35 +90,34 @@ class MainActivity : ComponentActivity() {
     ) {
         Log.d("sammy", "onRequestPermissionResult (MainActivity 83)")
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            RUNTIME_PERMISSION_REQUEST_CODE -> {
-                val containsPermanentDenial = permissions.zip(grantResults.toTypedArray()).any {
-                    it.second == PackageManager.PERMISSION_DENIED &&
-                            !ActivityCompat.shouldShowRequestPermissionRationale(this, it.first)
+
+        val containsPermanentDenial = permissions.zip(grantResults.toTypedArray()).any {
+            it.second == PackageManager.PERMISSION_DENIED &&
+                    !ActivityCompat.shouldShowRequestPermissionRationale(this, it.first)
+        }
+        val containsDenial = grantResults.any { it == PackageManager.PERMISSION_DENIED }
+        val allGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
+        when {
+            containsPermanentDenial -> {
+                Log.d("sammy", "containsPermanentDenial")
+                // TODO: Handle permanent denial (e.g., show AlertDialog with justification)
+                // Note: The user will need to navigate to App Settings and manually grant
+                // permissions that were permanently denied
+            }
+            containsDenial -> {
+                Log.d("sammy", "Contains Denial")
+                requestRelevantRuntimePermissions(requestCode)
+            }
+            allGranted && hasRequiredRuntimePermissions(requestCode) -> {
+                Log.d("sammy", "Look Andrea, it's working!!!")
+                if (requestCode == RUNTIME_PERMISSION_REQUEST_CODE) {
+                    startBleScan()
                 }
-                val containsDenial = grantResults.any { it == PackageManager.PERMISSION_DENIED }
-                val allGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
-                when {
-                    containsPermanentDenial -> {
-                        Log.d("sammy", "containsPermanentDenial")
-                        // TODO: Handle permanent denial (e.g., show AlertDialog with justification)
-                        // Note: The user will need to navigate to App Settings and manually grant
-                        // permissions that were permanently denied
-                    }
-                    containsDenial -> {
-                        Log.d("sammy", "Contains Denial")
-                        requestRelevantRuntimePermissions()
-                    }
-                    allGranted && hasRequiredRuntimePermissions() -> {
-                        Log.d("sammy", "Look Andrea, it's working!!!")
-                        startBleScan()
-                    }
-                    else -> {
-                        // Unexpected scenario encountered when handling permissions
-                        Log.d("sammy", "else else else recreate()")
-                        recreate()
-                    }
-                }
+            }
+            else -> {
+                // Unexpected scenario encountered when handling permissions
+                Log.d("sammy", "else else else recreate()")
+                recreate()
             }
         }
     }
@@ -126,6 +125,8 @@ class MainActivity : ComponentActivity() {
     companion object {
         const val ENABLE_BLUETOOTH_REQUEST_CODE = 1
         const val RUNTIME_PERMISSION_REQUEST_CODE = 2
+        const val ENABLE_MICROPHONE_REQUEST_CODE = 3
+
     }
 }
 

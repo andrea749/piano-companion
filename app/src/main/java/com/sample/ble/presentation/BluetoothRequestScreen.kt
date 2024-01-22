@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,8 @@ import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.sample.ble.MainActivity
+import com.sample.ble.util.checkAudioPermission
+import com.sample.ble.util.hasPermission
 import com.sample.ble.util.parseMidiFile
 import com.sample.ble.util.startBleScan
 import com.sample.ble.util.stopBleScan
@@ -66,10 +69,14 @@ fun BluetoothRequestScreen(
         if (scanResults.value is UiState.Success) {
             ScanResult((scanResults.value as UiState.Success).list, vm = vm)
         }
-        Button(onClick = { 
-                navController.navigate(Screen.AudioCaptureScreen.route)
+        Button(onClick = {
+                context.checkAudioPermission()
+                if (context.hasPermission(Manifest.permission.RECORD_AUDIO)) {
+                    navController.navigate(Screen.AudioCaptureScreen.route)
+                }
         }) {
             Text(text = "go to audio capture")
+            // TODO: grey out button if permission not granted
         }
     }
 }
