@@ -16,10 +16,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import android.media.MediaRecorder
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun AudioCaptureScreen(
     navController: NavController,
+    vm: AudioCaptureScreenViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -36,18 +40,10 @@ fun AudioCaptureScreen(
                 .background(
                     color = Color.Blue,
                     shape = CircleShape,
-                ),
-//                .clickable {
-//                    navController.navigate(
-//                        route = Screen.AudioCaptureScreen.route,
-//                    ) {
-//                        popUpTo(
-//                            route = Screen.StartScreen.route,
-//                        ) {
-//                            inclusive = true
-//                        }
-//                    }
-//                },
+                )
+                .clickable {
+                    vm.turnOnRecorder()
+                },
             contentAlignment = Alignment.Center,
         ) {
             Text(

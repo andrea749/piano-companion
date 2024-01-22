@@ -14,6 +14,7 @@ import android.os.Handler
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.sample.ble.R
+import com.sample.ble.presentation.AudioCaptureScreenViewModel
 import com.sample.ble.presentation.BluetoothRequestScreenViewModel
 import dagger.Module
 import dagger.Provides
@@ -77,6 +78,10 @@ object AppModule {
     fun provideBluetoothRequestScreenViewModel(
         @ApplicationContext context: Context,
         ) = BluetoothRequestScreenViewModel(context)
+
+    @Provides
+    @Singleton
+    fun provideAudioCaptureScreenViewModel() = AudioCaptureScreenViewModel()
 
     @Provides
     @Singleton
