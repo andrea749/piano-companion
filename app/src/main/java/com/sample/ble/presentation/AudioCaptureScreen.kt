@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
-fun StartScreen(
+fun AudioCaptureScreen(
     navController: NavController,
 ) {
     Box(
@@ -29,25 +29,25 @@ fun StartScreen(
             modifier = Modifier
                 .size(
                     size = 150.dp,
-                    )
+                )
                 .clip(
                     shape = CircleShape,
-                    )
+                )
                 .background(
                     color = Color.Blue,
                     shape = CircleShape,
-                    )
-                .clickable {
-                    navController.navigate(
-                        route = Screen.AudioCaptureScreen.route,
-                        ) {
-                        popUpTo(
-                            route = Screen.StartScreen.route,
-                            ) {
-                                inclusive = true
-                        }
-                    }
-                },
+                ),
+//                .clickable {
+//                    navController.navigate(
+//                        route = Screen.AudioCaptureScreen.route,
+//                    ) {
+//                        popUpTo(
+//                            route = Screen.StartScreen.route,
+//                        ) {
+//                            inclusive = true
+//                        }
+//                    }
+//                },
             contentAlignment = Alignment.Center,
         ) {
             Text(

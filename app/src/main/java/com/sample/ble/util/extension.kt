@@ -26,9 +26,11 @@ fun Context.hasPermission(permissionType: String): Boolean {
 fun Context.hasRequiredRuntimePermissions(): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         hasPermission(Manifest.permission.BLUETOOTH_SCAN) &&
-                hasPermission(Manifest.permission.BLUETOOTH_CONNECT)
+                hasPermission(Manifest.permission.BLUETOOTH_CONNECT) &&
+                hasPermission(Manifest.permission.RECORD_AUDIO)
     } else {
-        hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+        hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+                hasPermission(Manifest.permission.RECORD_AUDIO)
     }
 }
 
@@ -37,10 +39,30 @@ fun Activity.requestRelevantRuntimePermissions() {
     when {
         Build.VERSION.SDK_INT < Build.VERSION_CODES.S -> {
             requestLocationPermission(this)
+            requestMicrophonePermission(this)
+
         }
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             requestBluetoothPermissions(this)
+            requestMicrophonePermission(this)
         }
+    }
+}
+
+fun requestMicrophonePermission(activity: Activity) {
+    activity.runOnUiThread {
+        val alert = AlertDialog.Builder(activity)
+        alert.apply {
+            setTitle("Microphone permission required")
+            setMessage("Microphone access required for note detection feature.")
+            setPositiveButton(android.R.string.ok) { _, _ ->
+                ActivityCompat.requestPermissions(
+                    activity,
+                    arrayOf(Manifest.permission.RECORD_AUDIO),
+                    RUNTIME_PERMISSION_REQUEST_CODE
+                )
+            }
+        }.show()
     }
 }
 
@@ -51,12 +73,11 @@ fun requestLocationPermission(activity: Activity) {
             setTitle("Location permission required")
             setMessage("Starting from Android M (6.0), the system requires apps to be granted " +
                     "location access in order to scan for BLE devices.")
-            //isCancelable = false
             setPositiveButton(android.R.string.ok) { _, _ ->
                 ActivityCompat.requestPermissions(
                     activity,
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    MainActivity.RUNTIME_PERMISSION_REQUEST_CODE
+                    RUNTIME_PERMISSION_REQUEST_CODE
                 )
             }
         }.show()
@@ -71,7 +92,6 @@ fun requestBluetoothPermissions(activity: Activity) {
             setTitle("Bluetooth permissions required")
             setMessage("Starting from Android 12, the system requires apps to be granted " +
                     "Bluetooth access in order to scan for and connect to BLE devices.")
-            //isCancelable = false
             setPositiveButton(android.R.string.ok) { _, _ ->
                 ActivityCompat.requestPermissions(
                     activity,
@@ -105,11 +125,7 @@ fun MainActivity.startBleScan() {
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)// short scan periods
             .setMatchMode(ScanSettings.MATCH_MODE_STICKY) // only nearby devices
             .build()
-
-        // Todo: What's the Arduino UUID?
-//        val filter = ScanFilter.Builder().setServiceUuid(
-//            ParcelUuid.fromString("PLACEHOLDER_SERVICE_UUID.toString()")
-//        ).build()
+        
         bleScanner.startScan(null, scanSettings, scanCallback)
         isScanning = true
     }

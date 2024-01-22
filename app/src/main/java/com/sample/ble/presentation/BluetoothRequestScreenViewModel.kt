@@ -1,6 +1,7 @@
 package com.sample.ble.presentation
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
@@ -12,6 +13,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sample.ble.R
@@ -25,6 +27,7 @@ import com.sample.ble.util.parseMidiFile
 import com.sample.ble.util.printGattTable
 import com.sample.ble.util.toHexString
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
@@ -32,9 +35,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BluetoothRequestScreenViewModel @Inject constructor(
-    val context: Context,
-    private val adapter: BluetoothAdapter,
-    private val bluetoothServiceFactory: AppModule.BluetoothServiceFactory,
+    val context: Context, // AppContext is injected so might be ok??
 ): ViewModel() {
     // TODO: move bluetooth logic into separate class
 
@@ -45,6 +46,7 @@ class BluetoothRequestScreenViewModel @Inject constructor(
     var payload: Array<ByteArray> = arrayOf()
     var currByte = 0 // track which byte we are currently sending
 
+
     private val bluetoothGattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
             val deviceAddress = gatt?.device?.address
@@ -54,11 +56,6 @@ class BluetoothRequestScreenViewModel @Inject constructor(
                     Handler(Looper.getMainLooper()).post {
                         try {
                             bluetoothGatt?.discoverServices()
-//                            val ledChar = getLedWriteCharacteristic(context)
-//                            Log.d("andrea", "is ledChar null? ${ledChar == null}")
-//                            ledChar?.let {
-//                                Log.d("andrea", "let in connect ~~~~")
-//                                writeCharacteristic(it) }
 
                         } catch (e: SecurityException) {
                             Log.w("andrea", "SecurityException at gatt.discoverServices")
@@ -101,9 +98,6 @@ class BluetoothRequestScreenViewModel @Inject constructor(
                     val setNotif = gatt?.setCharacteristicNotification(it, true)
                 }
             }
-//            ledChar?.let {
-//                writeCharacteristic(it) }
-
         }
         // not really needed
         override fun onCharacteristicRead(
@@ -149,9 +143,14 @@ class BluetoothRequestScreenViewModel @Inject constructor(
                         if (currByte < payload.size-1) {
                             currByte += 1
                             writeCharacteristic(characteristic, payload)
-                            //writeCharacteristic()
                         } else {
                             Log.d("andrea", "should be done??")
+                            currByte = 0
+                            try {
+                                gatt.disconnect()
+                            } catch (e: SecurityException) {
+                                Log.d("andrea", "SecExc @ vm.onCharWrite")
+                            }
                         }
                     }
                     BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH -> {
@@ -184,6 +183,7 @@ class BluetoothRequestScreenViewModel @Inject constructor(
 
         }
         try {
+            // TODO: add scan filter and delete this
             if (newDevice?.device?.name == "ARDUINO") {
                 allResults.add(newDevice)
             }
@@ -231,6 +231,7 @@ class BluetoothRequestScreenViewModel @Inject constructor(
 //                characteristic.value = payload
             try {
                 // move this into the onCharWrite callback
+                // does this kick off onCharacteristicWrite or can we move it like line above ^
                 gatt.writeCharacteristic(characteristic)
             } catch (_: SecurityException) {
                 Log.d("andrea", "security exception in writeChar")
@@ -242,8 +243,7 @@ class BluetoothRequestScreenViewModel @Inject constructor(
         val bleGattCharacteristic : BluetoothGattCharacteristic? = getLedWriteCharacteristic(_context)
         bleGattCharacteristic?.let {
 //            val payload: Array<ByteArray> = parseMidiFile(_context)
-            payload = parseMidiFile(_context)
-            Log.d("andrea", "midi payload")
+            payload = parseMidiFile()
             writeCharacteristic(bleGattCharacteristic, payload)
         }
     }

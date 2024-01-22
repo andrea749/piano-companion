@@ -19,11 +19,15 @@ fun Navigation() {
             navController = navController,
         )
     }
-    composable(Screen.TemperatureHumidityScreen.route) {
-        TemperatureHumidityScreen()
+    composable(Screen.AudioCaptureScreen.route) {
+        AudioCaptureScreen(
+            navController = navController
+        )
     }
     composable(Screen.BluetoothRequest.route) {
-        BluetoothRequestScreen()
+        BluetoothRequestScreen(
+            navController = navController
+        )
     }
 }
 
@@ -31,6 +35,6 @@ fun Navigation() {
 
 sealed class Screen(val route: String) {
     object StartScreen: Screen("start_screen")
-    object TemperatureHumidityScreen: Screen("temp_humid_screen")
+    object AudioCaptureScreen: Screen("audio_capture_screen")
     object BluetoothRequest: Screen("bluetooth_request")
 }

@@ -1,6 +1,7 @@
 package com.sample.ble.di
 
 import android.Manifest
+import android.app.Application
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
@@ -12,7 +13,6 @@ import android.os.Build
 import android.os.Handler
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import com.sample.ble.BluetoothService
 import com.sample.ble.R
 import com.sample.ble.presentation.BluetoothRequestScreenViewModel
 import dagger.Module
@@ -53,16 +53,10 @@ object AppModule {
             override fun onScanResult(callbackType: Int, result: ScanResult?) {
                 super.onScanResult(callbackType, result)
                 with(result) {
-                    if (ActivityCompat.checkSelfPermission(
-                            context,
-                            Manifest.permission.BLUETOOTH_CONNECT
-                        ) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                    ) {
-                        return
-                    }
-                    vm.addScanResults(this)
-
-                    Log.i("ScanCallback", "Found BLE device! Name: ${this?.device?.name ?: "Unnamed"}, address: ${this?.device?.address}")
+                    try {
+                        vm.addScanResults(this)
+                        Log.i("ScanCallback", "Found BLE device! Name: ${this?.device?.name ?: "Unnamed"}, address: ${this?.device?.address}")
+                    } catch (_: SecurityException) {}
                 }
             }
 
@@ -82,14 +76,7 @@ object AppModule {
     @Singleton
     fun provideBluetoothRequestScreenViewModel(
         @ApplicationContext context: Context,
-        adapter: BluetoothAdapter,
-        bluetoothServiceFactory: BluetoothServiceFactory,
-        ) = BluetoothRequestScreenViewModel(context, adapter, bluetoothServiceFactory)
-
-    @AssistedFactory
-    interface BluetoothServiceFactory {
-        fun create(result: ScanResult): BluetoothService
-    }
+        ) = BluetoothRequestScreenViewModel(context)
 
     @Provides
     @Singleton

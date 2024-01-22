@@ -1,12 +1,15 @@
 package com.sample.ble.util
 
 import android.content.Context
+import android.content.res.Resources
 import android.util.Log
+import androidx.core.content.res.TypedArrayUtils.getString
 import com.leff.midi.MidiFile
 import com.leff.midi.event.MidiEvent
 import com.leff.midi.event.NoteOff
 import com.leff.midi.event.NoteOn
 import com.leff.midi.event.meta.Tempo
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -21,10 +24,10 @@ import kotlinx.serialization.json.Json
 import java.util.Arrays
 import kotlin.math.ceil
 
-
-private const val BYTE_ARRAY_SIZE = 20
+// TODO: request MTU and set byte array size to that
+private const val BYTE_ARRAY_SIZE = 32
 @Serializable
-data class Song(val tempo: Float, val notes: MutableList<MutableList<@Serializable(with = NumberSerializer::class)Number>>, val numOfEvents: Int = notes.size)
+data class Song(val tempo: Float, val numOfEvents: Int, val notes: MutableList<MutableList<@Serializable(with = NumberSerializer::class)Number>>)
 
 object NumberSerializer : KSerializer<Number> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Number", PrimitiveKind.STRING)
@@ -39,9 +42,11 @@ object NumberSerializer : KSerializer<Number> {
 
 }
 
-
-fun parseMidiFile(context: Context, fileName: String = "no name.mid"): Array<ByteArray> {
-    val input = context.assets.open(fileName)
+// was moving things to util, is prickly. trying to figure out if getSystem will give me the correct resources, or if it will look at phone resources. matters bc i have some strings in my res file.
+// might need to pass around the correct context instead
+fun parseMidiFile(fileName: String = "no name.mid"): Array<ByteArray> {
+//    val input = context.assets.open(fileName)
+    val input = Resources.getSystem().assets.open(fileName)
     val midiFile = MidiFile(input)
     val noteEvents: MutableList<MutableList<Number>> = mutableListOf()
     var tempo = 0f
@@ -49,7 +54,6 @@ fun parseMidiFile(context: Context, fileName: String = "no name.mid"): Array<Byt
     for (track in midiFile.tracks) {
         val iterator: Iterator<MidiEvent> = track.events.iterator()
         while (iterator.hasNext()) {
-            // TODO: create generic Note class
             when (val event = iterator.next()) {
                 is NoteOff -> {
                     noteEvents.add(mutableListOf(event.tick, event.noteValue, event.velocity))
@@ -65,7 +69,8 @@ fun parseMidiFile(context: Context, fileName: String = "no name.mid"): Array<Byt
             }
         }
     }
-    val song = Song(tempo, noteEvents, noteEvents.size)
+    val song = Song(tempo, noteEvents.size, noteEvents)
+    Log.d("andrea", "song: ${Json.encodeToString(song)}")
     val byteArray = Json.encodeToString(song).encodeToByteArray()
     val allByteArrays = splitByteArray(byteArray)
     Log.d("andrea", "returning byte arrays")
@@ -75,7 +80,7 @@ fun parseMidiFile(context: Context, fileName: String = "no name.mid"): Array<Byt
 fun splitByteArray(byteArray: ByteArray): Array<ByteArray> {
     val chunkSize = BYTE_ARRAY_SIZE
     val numChunks = ceil(byteArray.size.toDouble()/chunkSize).toInt()
-    val allByteArrays: Array<ByteArray> = Array(numChunks) { ByteArray(20) }
+    val allByteArrays: Array<ByteArray> = Array(numChunks) { ByteArray(BYTE_ARRAY_SIZE) }
     var start = 0
     var end = chunkSize
     for (i in 0 until numChunks) {
