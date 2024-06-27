@@ -13,6 +13,9 @@ roomRuntime = "2.6.1"
 roomCompiler = "2.6.1"
 roomKtx = "2.6.1"
 midiLib = "master-SNAPSHOT"
+serializationJson = "1.6.0"
+kotlinJvm = "1.7.20"
+kotlinSerialization = "1.7.20"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,11 +35,18 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
-android-midi-lib = { group = "com.github.leffelmania", name = "android-midi-lib", version.ref = "midiLib"}
-
+android-midi-lib = { group = "com.github.leffelmania", name = "android-midi-lib", version.ref = "midiLib" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinJvm" }
+jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
 google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
+#//DI
+#implementation("com.google.dagger:hilt-android:2.49")
+#kapt("com.google.dagger:hilt-compiler:2.47")
+#kapt("androidx.hilt:hilt-compiler:1.2.0")
+#implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
