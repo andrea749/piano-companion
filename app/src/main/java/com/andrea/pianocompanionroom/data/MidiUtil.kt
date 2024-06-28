@@ -15,7 +15,7 @@ import kotlin.math.ceil
 private const val BYTE_ARRAY_SIZE = 32
 fun parseMidiFile(input: InputStream): Array<ByteArray> {
     val midiFile = MidiFile(input)
-    val noteEvents: MutableList<MutableList<Number>> = mutableListOf()
+    val noteEvents: MutableList<List<Number>> = mutableListOf()
     var tempo = 0f
 
     for (track in midiFile.tracks) {
@@ -23,11 +23,11 @@ fun parseMidiFile(input: InputStream): Array<ByteArray> {
         while (iterator.hasNext()) {
             when (val event = iterator.next()) {
                 is NoteOff -> {
-                    noteEvents.add(mutableListOf(event.tick, event.noteValue, event.velocity))
+                    noteEvents.add(listOf(event.tick, event.noteValue, event.velocity))
                 }
 
                 is NoteOn -> {
-                    noteEvents.add(mutableListOf(event.tick, event.noteValue, event.velocity))
+                    noteEvents.add(listOf(event.tick, event.noteValue, event.velocity))
                 }
 
                 is Tempo -> {
@@ -36,7 +36,7 @@ fun parseMidiFile(input: InputStream): Array<ByteArray> {
             }
         }
     }
-    val song = Song(tempo, noteEvents.size, noteEvents)
+    val song = Song(tempo = tempo, numOfEvents = noteEvents.size, notes = noteEvents.toList())
     Log.d("andrea", "song: ${Json.encodeToString(song)}")
     val byteArray = Json.encodeToString(song).encodeToByteArray()
     val allByteArrays = splitByteArray(byteArray)

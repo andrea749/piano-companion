@@ -7,9 +7,24 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+
 
 @Serializable
-data class Song(val tempo: Float, val numOfEvents: Int, val notes: MutableList<MutableList<@Serializable(with = NumberSerializer::class)Number>>)
+@Entity(tableName = "Songs")
+data class Song(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val name: String = "",
+    val artist: String = "",
+    val tempo: Float,
+    val numOfEvents: Int,
+    val notes: List<List<@Serializable(with = NumberSerializer::class)Number>>
+)
+
+
 
 object NumberSerializer : KSerializer<Number> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Number", PrimitiveKind.STRING)
