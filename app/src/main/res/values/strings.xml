@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Piano Companion (Room)</string>
+    <string name="upload_screen">Upload Midi</string>
 </resources>
