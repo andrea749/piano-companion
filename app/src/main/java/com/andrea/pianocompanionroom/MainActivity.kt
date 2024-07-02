@@ -22,10 +22,11 @@ import com.andrea.pianocompanionroom.data.SongsRepository
 //import androidx.lifecycle.viewmodel.compose.viewModel
 import com.andrea.pianocompanionroom.data.parseMidiFile
 import com.andrea.pianocompanionroom.ui.theme.PianoCompanionRoomTheme
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.InputStream
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

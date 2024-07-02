@@ -1,8 +1,9 @@
 package com.andrea.pianocompanionroom.data
 
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class OfflineSongsRepository(private val songDao: SongDao) : SongsRepository {
+class OfflineSongsRepository @Inject constructor(private val songDao: SongDao) : SongsRepository {
     override fun getAllSongsStream(): Flow<List<Song>> = songDao.getAllSongs()
 
     override fun getSongStream(id: Int): Flow<Song?> = songDao.getSong(id)

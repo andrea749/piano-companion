@@ -10,10 +10,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.andrea.pianocompanionroom.R
 import com.andrea.pianocompanionroom.ui.navigation.NavigationDestination
 import com.andrea.pianocompanionroom.ui.theme.PianoCompanionRoomTheme
-import com.andrea.pianocompanionroom.viewmodel.AppViewModelProvider
 import com.andrea.pianocompanionroom.viewmodel.UploadMidiViewModel
 import kotlinx.coroutines.launch
 
@@ -26,7 +26,7 @@ object UploadMidiDestination : NavigationDestination {
 fun UploadMidiScreen(
     name: String,
     modifier: Modifier = Modifier,
-    viewModel: UploadMidiViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: UploadMidiViewModel = hiltViewModel(),
     ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
