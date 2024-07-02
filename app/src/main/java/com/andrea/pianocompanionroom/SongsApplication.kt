@@ -3,7 +3,9 @@ package com.andrea.pianocompanionroom
 import android.app.Application
 import com.andrea.pianocompanionroom.data.AppContainer
 import com.andrea.pianocompanionroom.data.AppDataContainer
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class SongsApplication : Application() {
 
     /**
