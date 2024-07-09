@@ -8,7 +8,7 @@ import java.io.InputStream
 import javax.inject.Inject
 
 @HiltViewModel
-class UploadMidiViewModel @Inject constructor(var songsRepository: SongsRepository): ViewModel() {
+class MidiRoomViewModel @Inject constructor(private var songsRepository: SongsRepository): ViewModel() {
     suspend fun saveSong(songInput: InputStream) {
         val song = convertMidiToSong(songInput)
         songsRepository.insertSong(song)

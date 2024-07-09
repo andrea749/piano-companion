@@ -9,7 +9,6 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
 
 
 @Serializable
@@ -19,9 +18,10 @@ data class Song(
     val id: Int = 0,
     val name: String = "",
     val artist: String = "",
-    val tempo: Float,
-    val numOfEvents: Int,
-    val notes: List<List<@Serializable(with = NumberSerializer::class)Number>>
+    val duration: String = "", // purely for display purposes for now
+    val tempo: Float = 0F,
+    val numOfEvents: Int = 0,
+    val notes: List<List<@Serializable(with = NumberSerializer::class)Number>> = listOf()
 )
 
 
@@ -36,5 +36,28 @@ object NumberSerializer : KSerializer<Number> {
     override fun serialize(encoder: Encoder, value: Number) {
         encoder.encodeString(value.toString())
     }
-
 }
+
+val fakeSongData = listOf(
+    Song(name = "Super Graphic Ultra Modern Girl", artist = "Chappell Roan", duration = "3:04"),
+    Song(name = "Feminomenon", artist = "Chappell Roan", duration = "3:40"),
+    Song(name = "Francesca", artist = "Hozier", duration = "4:31"),
+    Song(name = "Edge of the Earth", artist = "The Beaches", duration = "2:41"),
+    Song(name = "ghj", artist = "kjsdf"),
+    Song(name = "ghj", artist = "kjsdf"),
+    Song(name = "ghj", artist = "kjsdf"),
+    Song(name = "ghj", artist = "kjsdf"),
+    Song(name = "ghj", artist = "kjsdf"),
+    Song(name = "ghj", artist = "kjsdf"),
+    Song(name = "ghj", artist = "kjsdf"),
+    Song(name = "ghj", artist = "kjsdf"),
+    Song(name = "sdf", artist = "xcgv"),
+    Song(name = "sdf", artist = "xcgv"),
+    Song(name = "sdf", artist = "xcgv"),
+    Song(name = "sdf", artist = "xcgv"),
+    Song(name = "sdf", artist = "xcgv"),
+    Song(name = "sdf", artist = "xcgv"),
+    Song(name = "sdf", artist = "xcgv"),
+    Song(name = "sdf", artist = "xcgv"),
+    Song(name = "bmn", artist = "xvcv"),
+    )

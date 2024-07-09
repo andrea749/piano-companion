@@ -5,8 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.andrea.pianocompanionroom.view.UploadMidiDestination
-import com.andrea.pianocompanionroom.view.UploadMidiScreen
+import com.andrea.pianocompanionroom.view.MidiRoomDestination
+import com.andrea.pianocompanionroom.view.MidiRoomScreen
 
 /**
  * Provides Navigation graph for the application.
@@ -17,10 +17,10 @@ fun AppNavHost(
     modifier: Modifier = Modifier,
 ) {
     NavHost(
-        navController = navController, startDestination = UploadMidiDestination.route, modifier = modifier
+        navController = navController, startDestination = MidiRoomDestination.route, modifier = modifier
     ) {
-        composable(route = UploadMidiDestination.route) {
-            UploadMidiScreen("andrea")
+        composable(route = MidiRoomDestination.route) {
+            MidiRoomScreen()
         }
     }
 }
