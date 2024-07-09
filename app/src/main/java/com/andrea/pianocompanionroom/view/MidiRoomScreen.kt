@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.andrea.pianocompanionroom.R
 import com.andrea.pianocompanionroom.data.Song
-import com.andrea.pianocompanionroom.data.fakeSongData
 import com.andrea.pianocompanionroom.ui.navigation.NavigationDestination
 import com.andrea.pianocompanionroom.viewmodel.MidiRoomViewModel
 import kotlinx.coroutines.launch
@@ -75,8 +75,7 @@ fun MidiRoomScreen(
                     Text(text = "process and save midi")
                 }
             }
-            // TODO - connect to repo
-            AllSongs(fakeSongData)
+            AllSongs(viewModel.uiState.collectAsState().value.songs)
         }
     }
 
@@ -139,7 +138,7 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
 fun SongDetails(song: Song, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Text(
-            text = song.name,
+            text = song.id.toString(),
             fontWeight = FontWeight.SemiBold,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
