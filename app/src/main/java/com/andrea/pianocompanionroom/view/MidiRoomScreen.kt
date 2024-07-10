@@ -46,6 +46,7 @@ object MidiRoomDestination : NavigationDestination {
 
 @Composable
 fun MidiRoomScreen(
+    navigateToUploadScreen: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MidiRoomViewModel = hiltViewModel(),
     ) {
@@ -65,11 +66,7 @@ fun MidiRoomScreen(
                     shape = RoundedCornerShape(corner = CornerSize(5.dp)),
                     modifier = Modifier.wrapContentSize(),
                     // TODO - move to viewmodel
-                    onClick = {
-                        coroutineScope.launch {
-                            viewModel.saveSong(context.assets.open("no name.mid"))
-                        }
-                    }
+                    onClick = navigateToUploadScreen,
                 ) {
                     // TODO - lead to other screen with a save form
                     Text(text = "process and save midi")

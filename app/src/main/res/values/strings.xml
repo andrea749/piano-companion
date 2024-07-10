@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Piano Companion (Room)</string>
     <string name="midi_room_screen">MIDI Room</string>
+    <string name="midi_upload_screen">MIDI Upload</string>
 </resources>

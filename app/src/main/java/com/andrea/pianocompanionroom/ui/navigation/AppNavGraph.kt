@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.andrea.pianocompanionroom.view.MidiRoomDestination
 import com.andrea.pianocompanionroom.view.MidiRoomScreen
+import com.andrea.pianocompanionroom.view.MidiUploadScreen
+import com.andrea.pianocompanionroom.view.MidiUploadDestination
 
 /**
  * Provides Navigation graph for the application.
@@ -20,7 +22,10 @@ fun AppNavHost(
         navController = navController, startDestination = MidiRoomDestination.route, modifier = modifier
     ) {
         composable(route = MidiRoomDestination.route) {
-            MidiRoomScreen()
+            MidiRoomScreen(navigateToUploadScreen = { navController.navigate(MidiUploadDestination.route) })
+        }
+        composable(route = MidiUploadDestination.route) {
+            MidiUploadScreen(navigateToMidiRoom = { navController.navigate(MidiRoomDestination.route)})
         }
     }
 }
