@@ -22,11 +22,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,7 +34,6 @@ import com.andrea.pianocompanionroom.R
 import com.andrea.pianocompanionroom.data.Song
 import com.andrea.pianocompanionroom.ui.navigation.NavigationDestination
 import com.andrea.pianocompanionroom.viewmodel.MidiRoomViewModel
-import kotlinx.coroutines.launch
 
 object MidiRoomDestination : NavigationDestination {
     override val route = "midi_room"
@@ -47,14 +44,13 @@ object MidiRoomDestination : NavigationDestination {
 @Composable
 fun MidiRoomScreen(
     navigateToUploadScreen: () -> Unit,
+    navigateToViewScreen: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MidiRoomViewModel = hiltViewModel(),
     ) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-    Scaffold {
+    Scaffold(modifier = modifier) {
         Column(
-            modifier = modifier.padding(it),
+            modifier = Modifier.padding(it),
         ) {
             Row(
                 horizontalArrangement = Arrangement.End,
@@ -65,22 +61,20 @@ fun MidiRoomScreen(
                 Button(
                     shape = RoundedCornerShape(corner = CornerSize(5.dp)),
                     modifier = Modifier.wrapContentSize(),
-                    // TODO - move to viewmodel
                     onClick = navigateToUploadScreen,
                 ) {
-                    // TODO - lead to other screen with a save form
-                    Text(text = "process and save midi")
+                    Text(text = "upload midi")
                 }
             }
-            AllSongs(viewModel.uiState.collectAsState().value.songs)
+            AllSongs(viewModel.uiState.collectAsState().value.songs, navigateToViewScreen)
         }
     }
-
 }
 
 @Composable
 fun AllSongs(
     songData: List<Song>,
+    navigateToViewScreen: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -99,15 +93,20 @@ fun AllSongs(
             contentPadding = PaddingValues(16.dp)
         ) {
             items(songData) { song ->
-                SongCard(song)
+                SongCard(song, navigateToViewScreen)
             }
         }
     }
 }
 
+// TODO add swipe to edit/delete maybe?
 @Composable
-fun SongCard(song: Song, modifier: Modifier = Modifier) {
+fun SongCard(
+    song: Song,
+    navigateToViewScreen: (Int) -> Unit,
+    modifier: Modifier = Modifier) {
     Card(
+        onClick = { navigateToViewScreen(song.id) },
         modifier = modifier
             .padding(10.dp)
             .fillMaxWidth()

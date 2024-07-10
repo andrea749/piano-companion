@@ -17,6 +17,11 @@ interface SongsRepository {
     fun getSongStream(id: Int): Flow<Song?>
 
     /**
+     * Retrieve all songs from the given data source that starts with the [key].
+     */
+    fun getSongStream(key: String): Flow<Song?>
+
+    /**
      * Insert song in the data source
      */
     suspend fun insertSong(song: Song)

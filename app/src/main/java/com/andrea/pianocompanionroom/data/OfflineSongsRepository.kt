@@ -7,6 +7,9 @@ class OfflineSongsRepository @Inject constructor(private val songDao: SongDao) :
     override fun getAllSongsStream(): Flow<List<Song>> = songDao.getAllSongs()
 
     override fun getSongStream(id: Int): Flow<Song?> = songDao.getSong(id)
+    override fun getSongStream(key: String): Flow<Song?> {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun insertSong(song: Song) = songDao.insert(song)
 

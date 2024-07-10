@@ -14,7 +14,11 @@ import kotlin.math.ceil
 // TODO: request MTU and set byte array size to that
 private const val BYTE_ARRAY_SIZE = 32
 
-fun convertMidiToSong(input: InputStream): Song {
+fun convertMidiToSong(
+    input: InputStream,
+    songName: String = "",
+    artistName: String = "",
+    ): Song {
     val midiFile = MidiFile(input)
     val noteEvents: MutableList<List<Number>> = mutableListOf()
     var tempo = 0f
@@ -37,7 +41,13 @@ fun convertMidiToSong(input: InputStream): Song {
             }
         }
     }
-    return Song(tempo = tempo, numOfEvents = noteEvents.size, notes = noteEvents.toList())
+    return Song(
+        tempo = tempo,
+        numOfEvents = noteEvents.size,
+        notes = noteEvents.toList(),
+        artist = artistName,
+        name = songName,
+        )
 }
 
 fun parseMidiFile(input: InputStream): Array<ByteArray> {
