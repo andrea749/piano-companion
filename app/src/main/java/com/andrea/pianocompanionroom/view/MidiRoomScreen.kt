@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.andrea.pianocompanionroom.R
 import com.andrea.pianocompanionroom.data.Song
 import com.andrea.pianocompanionroom.ui.navigation.NavigationDestination
+import com.andrea.pianocompanionroom.ui.theme.ThemeColors
 import com.andrea.pianocompanionroom.viewmodel.MidiRoomViewModel
 
 object MidiRoomDestination : NavigationDestination {
@@ -50,7 +51,9 @@ fun MidiRoomScreen(
     ) {
     Scaffold(modifier = modifier) {
         Column(
-            modifier = Modifier.padding(it),
+            modifier = Modifier
+                .padding(it)
+                .padding(bottom = 20.dp),
         ) {
             Row(
                 horizontalArrangement = Arrangement.End,
@@ -62,8 +65,14 @@ fun MidiRoomScreen(
                     shape = RoundedCornerShape(corner = CornerSize(5.dp)),
                     modifier = Modifier.wrapContentSize(),
                     onClick = navigateToUploadScreen,
+                    colors = ThemeColors.NavigationButtonColors,
+                    border = ThemeColors.NavigationButtonBorderStroke,
                 ) {
-                    Text(text = "upload midi")
+                    Text(
+                        text = "upload midi",
+                        color = ThemeColors.ButtonTextColor,
+                        fontSize = 20.sp,
+                        )
                 }
             }
             AllSongs(viewModel.uiState.collectAsState().value.songs, navigateToViewScreen)

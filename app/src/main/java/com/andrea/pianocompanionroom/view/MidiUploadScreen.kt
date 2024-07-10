@@ -16,9 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.andrea.pianocompanionroom.R
 import com.andrea.pianocompanionroom.ui.navigation.NavigationDestination
+import com.andrea.pianocompanionroom.ui.theme.ThemeColors
 import com.andrea.pianocompanionroom.viewmodel.MidiUploadViewModel
 
 object MidiUploadDestination : NavigationDestination {
@@ -51,8 +53,15 @@ fun MidiUploadScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
                 ) {
-                Button(onClick = { launcher.launch(arrayOf("audio/midi")) }) {
-                    Text(text = "select file")
+                Button(
+                    onClick = { launcher.launch(arrayOf("audio/midi")) },
+                    colors = ThemeColors.NavigationButtonColors,
+                    border = ThemeColors.NavigationButtonBorderStroke,
+                ) {
+                    Text(
+                        text = "select file",
+                        color = ThemeColors.ButtonTextColor,
+                        fontSize = 20.sp,)
                 }
             }
             Column {
@@ -70,8 +79,15 @@ fun MidiUploadScreen(
             Button(onClick = {
                 viewModel.saveSong()
                 navigateToMidiRoom()
-            }) {
-                Text(text = "Upload")
+            },
+                colors = ThemeColors.NavigationButtonColors,
+                border = ThemeColors.NavigationButtonBorderStroke,
+                ) {
+                Text(
+                    text = "Upload",
+                    color = ThemeColors.ButtonTextColor,
+                    fontSize = 20.sp,
+                    )
             }
         }
     }

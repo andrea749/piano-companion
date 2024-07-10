@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,6 +29,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.andrea.pianocompanionroom.R
 import com.andrea.pianocompanionroom.ui.navigation.NavigationDestination
+import com.andrea.pianocompanionroom.ui.theme.ThemeColors
+import com.andrea.pianocompanionroom.ui.theme.ThemeColors.ButtonTextColor
+import com.andrea.pianocompanionroom.ui.theme.ThemeColors.ControlButtonColor
+import com.andrea.pianocompanionroom.ui.theme.ThemeColors.HeaderTextColor
+import com.andrea.pianocompanionroom.ui.theme.ThemeColors.NavigationButtonBorderStroke
+import com.andrea.pianocompanionroom.ui.theme.ThemeColors.NavigationButtonColors
 import com.andrea.pianocompanionroom.viewmodel.ViewMidiViewModel
 
 // TODO add rewind placeholders and handle screen rotations (maybe make required).
@@ -59,7 +66,7 @@ fun ViewMidiScreen(
         ) {
             Text(
                 text = uiState.value.selectedSong?.name ?: "No Title",
-                color = Color.Blue,
+                color = HeaderTextColor,
                 style = MaterialTheme.typography.headlineLarge,
                 fontSize = MaterialTheme.typography.headlineLarge.fontSize * 1.5F,
             )
@@ -68,12 +75,12 @@ fun ViewMidiScreen(
                 onClick = navigateToMidiRoom,
                 modifier = Modifier
                     .fillMaxWidth(0.5F),
-                colors = ButtonColors(Color.Transparent, Color.Transparent, Color.Transparent, Color.Transparent),
-                border = BorderStroke(2.dp, Color.Red),
+                colors = NavigationButtonColors,
+                border = NavigationButtonBorderStroke,
             ) {
                 Text(
                     text = "Finished",
-                    color = Color.White,
+                    color = ButtonTextColor,
                     fontSize = 20.sp,
                     )
             }
@@ -95,7 +102,7 @@ fun StreamControls(modifier: Modifier = Modifier) {
             painter = painterResource(id = R.drawable.baseline_play_circle_24),
             contentDescription = "Play",
             contentScale = ContentScale.FillWidth,
-            colorFilter = ColorFilter.tint(Color.White)
+            colorFilter = ColorFilter.tint(ControlButtonColor)
         )
         Image(
             modifier = Modifier
@@ -104,7 +111,7 @@ fun StreamControls(modifier: Modifier = Modifier) {
             painter = painterResource(id = R.drawable.pause_24dp),
             contentDescription = "Pause",
             contentScale = ContentScale.FillWidth,
-            colorFilter = ColorFilter.tint(Color.White)
+            colorFilter = ColorFilter.tint(ControlButtonColor)
         )
     }
 }
