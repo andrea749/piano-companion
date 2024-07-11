@@ -5,11 +5,11 @@ import javax.inject.Inject
 
 class OfflineSongsRepository @Inject constructor(private val songDao: SongDao) : SongsRepository {
     override fun getAllSongsStream(): Flow<List<Song>> = songDao.getAllSongs()
+    override fun getFilteredSongsStream(searchKey: String): Flow<List<Song>> = songDao.getFilteredSongs(searchKey)
 
     override fun getSongStream(id: Int): Flow<Song?> = songDao.getSong(id)
-    override fun getSongStream(key: String): Flow<Song?> {
-        TODO("Not yet implemented")
-    }
+
+    override fun getSongStream(key: String): Flow<Song?> = songDao.getSong(key)
 
     override suspend fun insertSong(song: Song) = songDao.insert(song)
 

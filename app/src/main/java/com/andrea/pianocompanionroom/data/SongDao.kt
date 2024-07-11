@@ -23,6 +23,12 @@ interface SongDao {
     @Query("SELECT * from Songs WHERE id = :id")
     fun getSong(id: Int): Flow<Song>
 
+    @Query("SELECT * from Songs WHERE name = :song")
+    fun getSong(song: String): Flow<Song>
+
+    @Query("SELECT * from Songs WHERE name LIKE :s OR artist LIKE :s ORDER BY name ASC")
+    fun getFilteredSongs(s: String): Flow<List<Song>>
+
     @Query("SELECT * from Songs ORDER BY name ASC")
     fun getAllSongs(): Flow<List<Song>>
 }

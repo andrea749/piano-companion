@@ -12,6 +12,11 @@ interface SongsRepository {
     fun getAllSongsStream(): Flow<List<Song>>
 
     /**
+     * Retrieve all the songs from the the given data source that match a search key.
+     */
+    fun getFilteredSongsStream(searchKey: String): Flow<List<Song>>
+
+    /**
      * Retrieve a song from the given data source that matches with the [id].
      */
     fun getSongStream(id: Int): Flow<Song?>

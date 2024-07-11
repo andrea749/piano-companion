@@ -14,19 +14,28 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,6 +44,7 @@ import com.andrea.pianocompanionroom.data.Song
 import com.andrea.pianocompanionroom.ui.navigation.NavigationDestination
 import com.andrea.pianocompanionroom.ui.theme.ThemeColors
 import com.andrea.pianocompanionroom.viewmodel.MidiRoomViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 
 object MidiRoomDestination : NavigationDestination {
     override val route = "midi_room"
@@ -49,17 +59,19 @@ fun MidiRoomScreen(
     modifier: Modifier = Modifier,
     viewModel: MidiRoomViewModel = hiltViewModel(),
     ) {
-    Scaffold(modifier = modifier) {
+    Scaffold(modifier = modifier) { paddingValues ->
         Column(
             modifier = Modifier
-                .padding(it)
-                .padding(bottom = 20.dp),
+                .padding(paddingValues)
+                .padding(bottom = 20.dp)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(7.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(bottom = 16.dp),
             ) {
                 Button(
                     shape = RoundedCornerShape(corner = CornerSize(5.dp)),
@@ -75,7 +87,12 @@ fun MidiRoomScreen(
                         )
                 }
             }
-            AllSongs(viewModel.uiState.collectAsState().value.songs, navigateToViewScreen)
+            AllSongs(
+                viewModel.uiState.collectAsState().value.songs,
+                navigateToViewScreen,
+                viewModel.searchUiState.value,
+                { viewModel.updateSearchUiState(it) }
+            )
         }
     }
 }
@@ -84,6 +101,8 @@ fun MidiRoomScreen(
 fun AllSongs(
     songData: List<Song>,
     navigateToViewScreen: (Int) -> Unit,
+    searchUiText: String,
+    onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -95,6 +114,28 @@ fun AllSongs(
                 text = "Pick a song",
                 fontWeight = FontWeight.Bold,
                 fontSize = 26.sp
+            )
+        }
+        Row(horizontalArrangement = Arrangement.Start,
+            modifier = Modifier
+                .padding(start = 20.dp)
+        ) {
+            TextField(
+                value = searchUiText,
+                onValueChange = { onValueChange(it) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                colors = TextFieldDefaults.colors(
+                    focusedLeadingIconColor = Color.Yellow,
+                    unfocusedLeadingIconColor = Color.Yellow,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Yellow,
+                    focusedIndicatorColor = Color.Yellow,
+                    unfocusedIndicatorColor = Color.Yellow,
+                    )
             )
         }
         LazyColumn(
