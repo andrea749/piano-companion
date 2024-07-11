@@ -21,6 +21,7 @@ navigationRuntimeKtx = "2.7.7"
 navigationCompose = "2.7.7"
 hilt = "2.51.1"
 androidxHiltNavigationCompose = "1.2.0"
+accompanist = "0.21.1-beta"
 
 
 [libraries]
@@ -50,7 +51,8 @@ hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testi
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
-
+# Permissions
+accompanist = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
