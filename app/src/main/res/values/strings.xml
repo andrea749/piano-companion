@@ -4,4 +4,9 @@
     <string name="midi_upload_screen">MIDI Upload</string>
     <string name="view_midi_screen">View MIDI</string>
     <string name="home_screen">Home</string>
+<!--    BLE IDs set in arduino code-->
+    <string name="uuid">2765b8b0-97fc-47aa-a530-03f7c48d99be</string>
+    <string name="led_char_uuid">19B10001-E8F2-537E-4F6C-D104768A1214</string>
+    <string name="led_service_uuid">19B10000-E8F2-537E-4F6C-D104768A1214</string>
+    <string name="CCCD_uuid">00002902-0000-1000-8000-00805f9b34fb</string>
 </resources>

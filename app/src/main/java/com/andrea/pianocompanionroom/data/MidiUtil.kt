@@ -52,6 +52,10 @@ fun convertMidiToSong(
 
 fun parseMidiFile(input: InputStream): Array<ByteArray> {
     val song = convertMidiToSong(input)
+    return parseMidiFile(song)
+}
+
+fun parseMidiFile(song: Song): Array<ByteArray> {
     Log.d("andrea", "song: ${Json.encodeToString(song)}")
     val byteArray = Json.encodeToString(song).encodeToByteArray()
     val allByteArrays = splitByteArray(byteArray)
