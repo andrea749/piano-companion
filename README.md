@@ -16,8 +16,8 @@ From there, it passes the InputStream through convertMidiToSong. This turns all 
 This, along with user inputted information, is stored in the SongsRepository via insertSong.
 
 ### Midi Room
-The user enters this page either after selecting "finished" in the upload screen or by selecting "Midi Room" in the home screen.
-<img src="/uploadFlow.png" width="110" height="122"><img src="/MidiRoomScreen.png" width="224" height="498">
+The user enters this page either after selecting "finished" in the upload screen or by selecting "Midi Room" in the home screen.  
+<img src="/uploadFlow.png" width="110" height="122"><img src="/MidiRoomScreen.png" width="224" height="498">  
 Here, all the songs stored in the local database are displayed in clickable cards. There is a search bar above the list and it narrows down song cards as the user starts typing their query.
 When the user selects a song, the song ID is sent to ViewMidiScreen via the NavigationDestination.
 
