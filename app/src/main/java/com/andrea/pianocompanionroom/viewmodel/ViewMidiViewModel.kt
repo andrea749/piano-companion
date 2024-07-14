@@ -13,15 +13,15 @@ import com.andrea.pianocompanionroom.data.parseMidiFile
 import com.andrea.pianocompanionroom.view.ViewMidiDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 
-// TODO include count off
 /* include all ble code including connecting and streaming to the device.
 * This flow is entered by selecting a song from MidiRoomScreen.
 * Then, the phone connects to the arduino and sends the song.
@@ -42,12 +42,21 @@ class ViewMidiViewModel @Inject constructor(
     )
     private var currentByte = 0
 
+    /* Since getSongStream gives us a Flow<Song>, we need to use a StateFlow. To trigger
+    * recomposition in the composable, we need to make a new State every time something changes.
+    *  _uiState holds the new state and then is merged with the Flow<Song> to get the new state to
+    * register with the uiState StateFlow.
+    *
+    * Directly changing a value in the ViewMidiUiState tied to uiState doesn't trigger
+    * recomposition. */
+    private val _uiState: MutableStateFlow<ViewMidiUiState> = MutableStateFlow(ViewMidiUiState())
     val uiState: StateFlow<ViewMidiUiState> = songsRepository.getSongStream(itemId)
         .filterNotNull()
-        .map {
+        .combine(_uiState) { song, uiState ->
             ViewMidiUiState(
-                selectedSong = it,
-                isPlaying = false,
+                selectedSong = song,
+                isPlaying = uiState.isPlaying,
+                hasStarted = uiState.hasStarted,
             )
         }.stateIn(
             scope = viewModelScope,
@@ -63,6 +72,21 @@ class ViewMidiViewModel @Inject constructor(
             },
             firstByteArray = payload[0],
         )
+        play()
+    }
+
+    fun pause() {
+        _uiState.value = _uiState.value.copy(isPlaying = false)
+        TODO("send ble signal here")
+    }
+
+    fun play() {
+        _uiState.value = _uiState.value.copy(isPlaying = true)
+        TODO("send ble signal here")
+    }
+
+    fun updateHasStarted() {
+        _uiState.value = _uiState.value.copy(hasStarted = true)
     }
 }
 
@@ -70,4 +94,5 @@ class ViewMidiViewModel @Inject constructor(
 data class ViewMidiUiState(
     val selectedSong: Song? = null,
     val isPlaying: Boolean = false,
+    val hasStarted: Boolean = false,
 )

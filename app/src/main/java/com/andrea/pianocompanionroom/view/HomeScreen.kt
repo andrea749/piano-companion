@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,9 +46,14 @@ fun HomeScreen(
             } else {
                 Column(
                     modifier = Modifier,
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(15.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Text(
+                        text = "Welcome!",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 30.sp
+                    )
                     Button(
                         onClick = navigateToMidiRoom,
                         colors = ThemeColors.NavigationButtonColors,
@@ -74,6 +80,7 @@ fun HomeScreen(
         }
     }
 }
+
 @Composable
 fun GrantPermissionsButton(onPermissionGranted: () -> Unit) {
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()

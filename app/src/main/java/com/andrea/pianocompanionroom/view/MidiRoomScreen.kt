@@ -25,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -44,7 +43,6 @@ import com.andrea.pianocompanionroom.data.Song
 import com.andrea.pianocompanionroom.ui.navigation.NavigationDestination
 import com.andrea.pianocompanionroom.ui.theme.ThemeColors
 import com.andrea.pianocompanionroom.viewmodel.MidiRoomViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 
 object MidiRoomDestination : NavigationDestination {
     override val route = "midi_room"
@@ -184,7 +182,7 @@ fun SongCard(
 fun SongDetails(song: Song, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Text(
-            text = song.id.toString(),
+            text = song.name,
             fontWeight = FontWeight.SemiBold,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
