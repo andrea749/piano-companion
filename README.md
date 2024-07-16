@@ -11,8 +11,8 @@ The user enters this screen either by selecting "upload" in the home screen or b
 <img src="/selectFlow.png" width="155" height="350"> <img src="/upload%20screen.png" width="224" height="498">
 
 The "select file" button opens the Android file picker, narrowed down to just .mid files. 
-From there, it passes the InputStream through convertMidiToSong. This turns all Note On and Note Off events and turns each MIDI Event into an array with 3 numbers: 
-[tick (timestamp), pitch, velocity (volume)]
+From there, it passes the InputStream through convertMidiToSong. This takes all Note On and Note Off events and turns each of them into an array with 3 numbers:  
+[tick (timestamp), pitch, velocity (volume)]  
 This, along with user inputted information, is stored in the SongsRepository via insertSong.
 
 ### Midi Room
