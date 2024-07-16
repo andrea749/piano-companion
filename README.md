@@ -6,7 +6,7 @@ The first screen the user sees is the Home screen. This screen handles asking fo
 <img src="/home%20screen.png" width="224" height="498">
 
 ### Upload Screen
-The user enters this screen either by selecting "upload" in the home screen or by selecting "upload file" in the MidiRoom screen.
+The user enters this screen either by selecting "upload" in the home screen or by selecting "select file" in the MidiRoom screen.
 
 <img src="/selectFlow.png" width="155" height="350"> <img src="/upload%20screen.png" width="224" height="498">
 
