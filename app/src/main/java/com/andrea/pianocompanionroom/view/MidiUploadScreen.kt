@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -46,48 +47,57 @@ fun MidiUploadScreen(
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
             .fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly,
+            verticalArrangement = Arrangement.Center,
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
+            Column(
+                modifier = Modifier,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(40.dp)
                 ) {
-                Button(
-                    onClick = { launcher.launch(arrayOf("audio/midi")) },
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    Button(
+                        onClick = { launcher.launch(arrayOf("audio/midi")) },
+                        colors = ThemeColors.NavigationButtonColors,
+                        border = ThemeColors.NavigationButtonBorderStroke,
+                        shape = RoundedCornerShape(5.dp),
+                    ) {
+                        Text(
+                            text = "select file",
+                            color = ThemeColors.ButtonTextColor,
+                            fontSize = 20.sp,)
+                    }
+                }
+                Column {
+                    TextField(
+                        value = viewModel.songName.value,
+                        onValueChange = { viewModel.songName.value = it },
+                        label = { Text(text = "Song Name") },
+                        maxLines = 1,
+                    )
+                    TextField(
+                        value = viewModel.artistName.value,
+                        onValueChange = { viewModel.artistName.value = it },
+                        label = { Text(text = "Artist Name") },
+                        maxLines = 1,
+                    )
+                }
+                Button(onClick = {
+                    viewModel.saveSong()
+                    navigateToMidiRoom()
+                },
                     colors = ThemeColors.NavigationButtonColors,
                     border = ThemeColors.NavigationButtonBorderStroke,
+                    shape = RoundedCornerShape(5.dp),
                 ) {
                     Text(
-                        text = "select file",
+                        text = "Upload",
                         color = ThemeColors.ButtonTextColor,
-                        fontSize = 20.sp,)
-                }
-            }
-            Column {
-                TextField(
-                    value = viewModel.songName.value,
-                    onValueChange = { viewModel.songName.value = it },
-                    label = { Text(text = "Song Name") },
-                )
-                TextField(
-                    value = viewModel.artistName.value,
-                    onValueChange = { viewModel.artistName.value = it },
-                    label = { Text(text = "Artist Name") },
-                )
-            }
-            Button(onClick = {
-                viewModel.saveSong()
-                navigateToMidiRoom()
-            },
-                colors = ThemeColors.NavigationButtonColors,
-                border = ThemeColors.NavigationButtonBorderStroke,
-                ) {
-                Text(
-                    text = "Upload",
-                    color = ThemeColors.ButtonTextColor,
-                    fontSize = 20.sp,
+                        fontSize = 20.sp,
                     )
+                }
             }
         }
     }

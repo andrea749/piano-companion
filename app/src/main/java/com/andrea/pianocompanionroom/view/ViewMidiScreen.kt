@@ -1,14 +1,20 @@
 package com.andrea.pianocompanionroom.view
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -25,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,7 +46,6 @@ import com.andrea.pianocompanionroom.ui.theme.ThemeColors.NavigationButtonColors
 import com.andrea.pianocompanionroom.viewmodel.ViewMidiViewModel
 import kotlinx.coroutines.delay
 
-// TODO handle screen rotations (maybe make required).
 
 object ViewMidiDestination : NavigationDestination {
     override val route = "view_midi"
@@ -54,10 +60,12 @@ fun ViewMidiScreen(
     modifier: Modifier = Modifier,
     viewModel: ViewMidiViewModel = hiltViewModel()
 ) {
+    val orientation = LocalConfiguration.current.orientation
     val uiState = viewModel.uiState.collectAsState()
     Scaffold(modifier = modifier
         .fillMaxSize(),
-        containerColor = Color.Black) {
+        containerColor = Color.Black
+    ) {
         Column(
             modifier = Modifier
                 .padding(it)
@@ -78,17 +86,55 @@ fun ViewMidiScreen(
                     viewModel.scanAndConnectToTarget()
                 })
             } else {
-                StreamControls(
-                    uiState.value.isPlaying,
-                    modifier = Modifier.fillMaxWidth(0.5F),
-                    onPause = { viewModel.pause() },
-                    onPlay = { viewModel.play() },)
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(0.7F),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        StreamControls(
+                            uiState.value.isPlaying,
+                            modifier = Modifier
+                                .weight(1F)
+                                .fillMaxHeight(0.5F)
+                                .padding(horizontal = 20.dp),
+                            timeModifier = Modifier
+                                .weight(0.45F)
+                                .fillMaxHeight(0.5F)
+                                .padding(horizontal = 20.dp),
+                            contentScale = ContentScale.Fit,
+                            onPause = { viewModel.pause() },
+                            onPlay = { viewModel.play() },
+                        )
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier.fillMaxHeight(0.7F),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                    ) {
+                        StreamControls(
+                            uiState.value.isPlaying,
+                            modifier = Modifier
+                                .weight(1F)
+                                .fillMaxWidth(0.5F)
+                                .padding(vertical = 20.dp),
+                            timeModifier = Modifier
+                                .weight(0.45F)
+                                .fillMaxWidth(0.5F)
+                                .padding(vertical = 20.dp),
+                            contentScale = ContentScale.Fit,
+                            onPause = { viewModel.pause() },
+                            onPlay = { viewModel.play() },
+                        )
+                    }
+                }
                 Button(
                     onClick = navigateToMidiRoom,
-                    modifier = Modifier
-                        .fillMaxWidth(0.5F),
+                    modifier = Modifier.wrapContentSize(),
                     colors = NavigationButtonColors,
                     border = NavigationButtonBorderStroke,
+                    shape = RoundedCornerShape(corner = CornerSize(5.dp)),
                 ) {
                     Text(
                         text = "Finished",
@@ -105,56 +151,49 @@ fun ViewMidiScreen(
 fun StreamControls(
     isPlaying: Boolean,
     modifier: Modifier = Modifier,
+    timeModifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Fit,
     onPause: () -> Unit = {},
     onPlay: () -> Unit = {},
     onRewind: () -> Unit = {},
     onFastForward: () -> Unit = {},
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        ) {
+    Image(
+        modifier = timeModifier
+            .clickable { onRewind() },
+        painter = painterResource(id = R.drawable.replay_10),
+        contentDescription = "Rewind",
+        contentScale = contentScale,
+        colorFilter = ColorFilter.tint(ControlButtonColor)
+    )
+
+    if (isPlaying) {
         Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onRewind() },
-            painter = painterResource(id = R.drawable.replay_10),
-            contentDescription = "Rewind",
-            contentScale = ContentScale.FillWidth,
+            modifier = modifier
+                .clickable { onPause() },
+            painter = painterResource(id = R.drawable.pause_24dp),
+            contentDescription = "Pause",
+            contentScale = contentScale,
             colorFilter = ColorFilter.tint(ControlButtonColor)
         )
-        if (isPlaying) {
-            Image(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onPause() },
-                painter = painterResource(id = R.drawable.pause_24dp),
-                contentDescription = "Pause",
-                contentScale = ContentScale.FillWidth,
-                colorFilter = ColorFilter.tint(ControlButtonColor)
-            )
-        } else {
-            Image(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onPlay() },
-                painter = painterResource(id = R.drawable.baseline_play_circle_24),
-                contentDescription = "Play",
-                contentScale = ContentScale.FillWidth,
-                colorFilter = ColorFilter.tint(ControlButtonColor)
-            )
-        }
+    } else {
         Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onFastForward() },
-            painter = painterResource(id = R.drawable.forward_10),
-            contentDescription = "Fast forward",
-            contentScale = ContentScale.FillWidth,
+            modifier = modifier
+                .clickable { onPlay() },
+            painter = painterResource(id = R.drawable.baseline_play_circle_24),
+            contentDescription = "Play",
+            contentScale = contentScale,
             colorFilter = ColorFilter.tint(ControlButtonColor)
         )
     }
+    Image(
+        modifier = timeModifier
+            .clickable { onFastForward() },
+        painter = painterResource(id = R.drawable.forward_10),
+        contentDescription = "Fast forward",
+        contentScale = contentScale,
+        colorFilter = ColorFilter.tint(ControlButtonColor)
+    )
 }
 
 @Composable

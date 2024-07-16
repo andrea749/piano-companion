@@ -1,11 +1,12 @@
 package com.andrea.pianocompanionroom.view
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -21,7 +22,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -31,13 +31,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.andrea.pianocompanionroom.R
 import com.andrea.pianocompanionroom.data.Song
 import com.andrea.pianocompanionroom.ui.navigation.NavigationDestination
@@ -106,7 +110,9 @@ fun AllSongs(
     Column(modifier = modifier) {
         Row(
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
             ) {
             Text(
                 text = "Pick a song",
@@ -117,22 +123,29 @@ fun AllSongs(
         Row(horizontalArrangement = Arrangement.Start,
             modifier = Modifier
                 .padding(start = 20.dp)
+                .fillMaxWidth()
         ) {
             TextField(
+                modifier = Modifier
+                    .height(40.dp)
+                    .border(
+                        width = 1.dp,
+                        color = Color.LightGray,
+                        shape = RoundedCornerShape(corner = CornerSize(5.dp))
+                    ),
+                shape = RoundedCornerShape(corner = CornerSize(5.dp)),
                 value = searchUiText,
                 onValueChange = { onValueChange(it) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 colors = TextFieldDefaults.colors(
-                    focusedLeadingIconColor = Color.Yellow,
-                    unfocusedLeadingIconColor = Color.Yellow,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Yellow,
-                    focusedIndicatorColor = Color.Yellow,
-                    unfocusedIndicatorColor = Color.Yellow,
+                    focusedContainerColor = Color.DarkGray,
+                    unfocusedContainerColor = Color.DarkGray,
+                    disabledContainerColor = Color.DarkGray,
+                    disabledIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
                     )
             )
         }
@@ -156,21 +169,24 @@ fun SongCard(
     Card(
         onClick = { navigateToViewScreen(song.id) },
         modifier = modifier
-            .padding(10.dp)
             .fillMaxWidth()
-            .wrapContentHeight(),
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+            .wrapContentHeight()
+            .padding(bottom = 10.dp),
+        shape = RectangleShape,
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_background),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(50.dp)
-                        .padding(8.dp),
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(LocalContext.current.filesDir.path + "/" + song.name + ".jpg")
+                        .crossfade(true)
+                        .build(),
+                    placeholder = painterResource(id = R.drawable.ic_launcher_background),
+                    contentDescription = "album cover",
                     contentScale = ContentScale.Fit,
+                    modifier = Modifier.size(50.dp)
+                        .padding(end = 8.dp),
                 )
             }
             SongDetails(song = song)
@@ -182,12 +198,12 @@ fun SongCard(
 fun SongDetails(song: Song, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Text(
-            text = song.name,
+            text = song.name.ifEmpty { "Untitled" },
             fontWeight = FontWeight.SemiBold,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(
-                text = song.artist,
+                text = song.artist.ifEmpty { "Untitled" },
                 fontWeight = FontWeight.Thin,
             )
             Text(

@@ -1,13 +1,9 @@
 package com.andrea.pianocompanionroom.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SearchBarColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -19,10 +15,10 @@ import androidx.compose.ui.unit.dp
 
 object ThemeColors {
     val ControlButtonColor = Color.White
-    val HeaderTextColor = Color.Blue
+    val HeaderTextColor = Color.White
     val ButtonTextColor = Color.White
     val NavigationButtonColors = ButtonColors(Color.Transparent, Color.Transparent, Color.Transparent, Color.Transparent)
-    val NavigationButtonBorderStroke = BorderStroke(2.dp, Color.Red)
+    val NavigationButtonBorderStroke = BorderStroke(2.dp, Color.Gray)
 }
 
 private val DarkColorScheme = darkColorScheme(

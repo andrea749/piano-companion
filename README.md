@@ -1,14 +1,14 @@
 ## Welcome to the WIP piano companion app!  
-This app requires bluetooth compatability.  
+This app requires bluetooth compatibility.  
 ### How it works:  
 The first screen the user sees is the Home screen. This screen handles asking for bluetooth permissions and navigating between two screens. Once permissions are granted, the user can go to either the MidiRoomScreen or the MidiUploadScreen.
 
-<img src="/HomeScreen.png" width="224" height="498">
+<img src="/home%20screen.png" width="224" height="498">
 
 ### Upload Screen
 The user enters this screen either by selecting "upload" in the home screen or by selecting "upload file" in the MidiRoom screen.
 
-<img src="/selectFlow.png" width="155" height="350"> <img src="/MidiUploadScreen.png" width="224" height="498">
+<img src="/selectFlow.png" width="155" height="350"> <img src="/upload%20screen.png" width="224" height="498">
 
 The "select file" button opens the Android file picker, narrowed down to just .mid files. 
 From there, it passes the InputStream through convertMidiToSong. This turns all Note On and Note Off events and turns each MIDI Event into an array with 3 numbers: 
@@ -17,13 +17,13 @@ This, along with user inputted information, is stored in the SongsRepository via
 
 ### Midi Room
 The user enters this page either after selecting "finished" in the upload screen or by selecting "Midi Room" in the home screen.  
-<img src="/uploadFlow.png" width="165" height="188"><img src="/MidiRoomScreen.png" width="224" height="498">  
+<img src="/uploadFlow.png" width="165" height="188"><img src="/midi%20room%20updated.png" width="224" height="498">  
 Here, all the songs stored in the local database are displayed in clickable cards. There is a search bar above the list and it narrows down song cards as the user starts typing their query.
 When the user selects a song, the song ID is sent to ViewMidiScreen via the NavigationDestination.
 
 ### ViewMidiScreen
-<img src="/ViewMidiScreen.png" width="224" height="498">
-A misnomer, this doesn't display a MIDI file but rather holds controls for streaming to the arudino. Currently, an animated countdown displays and then the song is sent via bluetooth. The play/pause buttons, along with rewind/ff, are not operational currently.
+<img src="/view%20midi%20updated.png" width="498" height="224">
+A misnomer, this doesn't display a MIDI file but rather holds controls for streaming to the arudino. Currently, an animated countdown displays and then the song is sent via bluetooth. The play/pause buttons, along with rewind/ff, are not operational currently but will send a signal to the arduino.
 
 ### Navigation
 This app uses Compose Navigation. Each screen has an associated NavigationDestination object, which defines the path to the screen and any additional arguments. For navigating to the ViewMidiScreen, a song ID is passed from the MidiRoomScreen via an onClick function created in the AppNavGraph and then used in the ViewMidiViewModel to retrieve the song from the app. 
@@ -67,7 +67,7 @@ Currently a majority of the code sits in the BLE class, and any users need to cr
   * start scan
   * get BluetoothGattCallback
     * here we watch out for the connection state. When the state is STATE_CONNECTED, we keep a reference to the BluetoothGatt (connection to the device) so we can read/write/etc later.
-      * gett.discoverServices() returns all the services the connected device offers. Since I know exactly what service has the characteristic I want to write to, I'm not really using this but leaving it for now. If you wanted, you could display the services and also get any available characteristics for each service here.
+      * gatt.discoverServices() returns all the services the connected device offers. Since I know exactly what service has the characteristic I want to write to, I'm not really using this but leaving it for now. If you wanted, you could display the services and also get any available characteristics for each service here.
     * onCharacteristicWrite
       * if we had multiple characteristics, we'd need to check which one was just written to here. Since there's only one, we automatically call onCharacteristicWrite, which in this case just sends the next piece of data to the device.
   
