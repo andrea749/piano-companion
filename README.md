@@ -28,55 +28,11 @@ A misnomer, this doesn't display a MIDI file but rather holds controls for strea
 ### Navigation
 This app uses Compose Navigation. Each screen has an associated NavigationDestination object, which defines the path to the screen and any additional arguments. For navigating to the ViewMidiScreen, a song ID is passed from the MidiRoomScreen via an onClick function created in the AppNavGraph and then used in the ViewMidiViewModel to retrieve the song from the app. 
 
-### Room
-This app uses Room to manage the database.  
-  
-#### SongInventoryDatabase  
-* defines what type of object is in the table, what (if any) TypeConverters are needed, and what migration strategy should be used. I used destructiveMigration but will probably change this later
-  
-#### OfflineSongsRepository  
-* implements the functions in SongsRepository, calls on the SongDao
-  
-#### SongDao  
-* has all the queries. Some are provided by Room, others (like all the GET functions) are written here
-  
-#### Song  
-* has a primaryKey (required by Room) and some fake data. Song.notes is of type List\<List\<Number\>\> since the "note" might contain ints (for pitch or velocity) or floats (for tick). Number is not a type that Room can automatically store in the db, so MidiEventConverter is required to convert this between List\<List\<Number\>\> <-> String
-  
-#### MidiUtil    
-* parseMidiFile converts a MIDI file into a Song, making it easy to store in the db.
+### ![Room](https://github.com/andrea749/piano-companion/tree/main/app/src/main/java/com/andrea/pianocompanionroom/data)
+This app uses Room to manage the database. It currently supports searching by song name or artist, getting all the songs, getting one song by name or id, and includes the built-in functions: insert, update, and delete. It is used in the ![MidiRoomViewModel](https://github.com/andrea749/piano-companion/blob/main/app/src/main/java/com/andrea/pianocompanionroom/viewmodel/MidiRoomViewModel.kt) to insert new songs into the database, and the ![MidiUploadViewModel](https://github.com/andrea749/piano-companion/blob/main/app/src/main/java/com/andrea/pianocompanionroom/viewmodel/MidiUploadViewModel.kt) to display all saved songs and search through the database.
 
 ### DI
 Hilt is used to inject dependencies, and providers are defined in the AppModule.  
-wip: The BLE class might be broken down and injected later.
 
-### BLE
-Currently a majority of the code sits in the BLE class, and any users need to create an instance and pass in a service UUID, characteristic UUID, and name of the device to connect to. (My UUIDs are set in the arduino code.) For the purposes of this project, all that needs to be done is connect to the specified device and send a ByteStream and occasionally some other bytes (the behavior of play/pause is TBD). Because of this, the main BLE API is scanAndConnnectToTarget and writeCharacteristic.  
-##### scanAndConnectToTarget:
-* Params
-  * context
-  * onCharacteristicWrite: called when the receiving device is successfully written to
-  * firstByteArray: to kick off the writes
-  * onScanResult: called when scanning for devices. If you wanted to display all the detected devices, this would be a good place to pass any detected devices into a Flow. For now, since we know what to connect to, nothing is passed.
-  * onScanFailed: could pass in some logging here
-  
-#### General set up:    
-  * get BluetoothLeScanner
-  * get scanCallback
-    * here, we save a reference to the device we want to connect to later. If you wanted to display all devices, you could add to a Flow here and then save the reference once the user picks the device.
-  * start scan
-  * get BluetoothGattCallback
-    * here we watch out for the connection state. When the state is STATE_CONNECTED, we keep a reference to the BluetoothGatt (connection to the device) so we can read/write/etc later.
-      * gatt.discoverServices() returns all the services the connected device offers. Since I know exactly what service has the characteristic I want to write to, I'm not really using this but leaving it for now. If you wanted, you could display the services and also get any available characteristics for each service here.
-    * onCharacteristicWrite
-      * if we had multiple characteristics, we'd need to check which one was just written to here. Since there's only one, we automatically call onCharacteristicWrite, which in this case just sends the next piece of data to the device.
-  
-##### Song.kt  
-* has a NumberSerializer. We'll never need to decode things since we only send, so only serialize is implemented. Everything else in Song is either a String or has a serializer built in.
-  
-##### MidiUtil  
-* gets all the NoteOn/NoteOff events from the MIDI file, converts to a ByteArray, and then chunks it into 32-byte sized arrays, ready to be sent via bluetooth!
-
-
-
-
+### ![BLE](https://github.com/andrea749/piano-companion/tree/main/app/src/main/java/com/andrea/pianocompanionroom/ble)
+Currently a majority of the code sits in the BLE class, and is hardcoded for a specific device, service, and characteristic (my UUIDs are set in the arduino code). For the purposes of this project, all that needs to be done is connect to the specified device and send a ByteStream and occasionally some other bytes (the behavior of play/pause is TBD). Because of this, the main BLE API is scanAndConnnectToTarget and writeCharacteristic.  
