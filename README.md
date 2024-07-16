@@ -1,4 +1,4 @@
-## Welcome to the WIP piano companion app!  
+## Welcome to the piano companion app!  
 This app requires bluetooth compatibility.  
 ### How it works:  
 The first screen the user sees is the Home screen. This screen handles asking for bluetooth permissions and navigating between two screens. Once permissions are granted, the user can go to either the MidiRoomScreen or the MidiUploadScreen.
