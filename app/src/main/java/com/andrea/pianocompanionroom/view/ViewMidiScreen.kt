@@ -73,7 +73,10 @@ fun ViewMidiScreen(
                 fontSize = MaterialTheme.typography.headlineLarge.fontSize * 1.5F,
             )
             if (!uiState.value.hasStarted) {
-                CountdownAnimation(onFinish = { viewModel.updateHasStarted() })
+                CountdownAnimation(onFinish = {
+                    viewModel.updateHasStarted()
+                    viewModel.scanAndConnectToTarget()
+                })
             } else {
                 StreamControls(
                     uiState.value.isPlaying,

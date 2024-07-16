@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andrea.pianocompanionroom.R
+import com.andrea.pianocompanionroom.SongsApplication
 import com.andrea.pianocompanionroom.ble.BLE
 import com.andrea.pianocompanionroom.data.Song
 import com.andrea.pianocompanionroom.data.SongsRepository
@@ -35,12 +36,9 @@ class ViewMidiViewModel @Inject constructor(
     @ApplicationContext context: Context,
 ): ViewModel() {
     private val itemId: Int = checkNotNull(savedStateHandle[ViewMidiDestination.itemIdArg])
-    private val ble = BLE(
-        "Arduino",
-        getString(context, R.string.led_service_uuid),
-        getString(context, R.string.led_char_uuid),
-    )
     private var currentByte = 0
+    private var ble: BLE = (context as SongsApplication).ble
+
 
     /* Since getSongStream gives us a Flow<Song>, we need to use a StateFlow. To trigger
     * recomposition in the composable, we need to make a new State every time something changes.
@@ -64,9 +62,9 @@ class ViewMidiViewModel @Inject constructor(
             initialValue = ViewMidiUiState()
         )
 
-    fun scanAndConnectToTarget(context: Context) {
+    fun scanAndConnectToTarget() {
         val payload = uiState.value.selectedSong?.let { parseMidiFile(it) } ?: error("Song not found")
-        ble.scanAndConnectToTarget(context,
+        ble.scanAndConnectToTarget(
             onCharacteristicWrite = { currentByte++
                 ble.writeCharacteristic(payload[currentByte])
             },
@@ -77,12 +75,12 @@ class ViewMidiViewModel @Inject constructor(
 
     fun pause() {
         _uiState.value = _uiState.value.copy(isPlaying = false)
-        TODO("send ble signal here")
+//        TODO("send ble signal here")
     }
 
     fun play() {
         _uiState.value = _uiState.value.copy(isPlaying = true)
-        TODO("send ble signal here")
+//        TODO("send ble signal here")
     }
 
     fun updateHasStarted() {
