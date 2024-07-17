@@ -1,5 +1,9 @@
 ## Welcome to the piano companion app!  
-This app requires bluetooth compatibility.  
+
+See it in action:  
+
+https://github.com/user-attachments/assets/320e19f3-4685-462c-9de5-8c92a0aa24e1
+
 ### How it works:  
 The first screen the user sees is the Home screen. This screen handles asking for bluetooth permissions and navigating between two screens. Once permissions are granted, the user can go to either the MidiRoomScreen or the MidiUploadScreen.
 
