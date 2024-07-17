@@ -127,7 +127,7 @@ fun AllSongs(
         ) {
             TextField(
                 modifier = Modifier
-                    .height(40.dp)
+                    .height(54.dp)
                     .border(
                         width = 1.dp,
                         color = Color.LightGray,
