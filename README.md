@@ -1,4 +1,5 @@
 ## Welcome to the piano companion app!  
+#### This innovative piano learning app allows users to upload MIDI files, view them in a library, and stream them to an Arduino that lights up an LED strip to guide you through each note.
 
 See it in action:  
 
