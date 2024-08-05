@@ -43,7 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrea.pianocompanionroom.R
-import com.andrea.pianocompanionroom.data.Song
+import com.andrea.pianocompanionroom.data.model.Song
 import com.andrea.pianocompanionroom.ui.navigation.NavigationDestination
 import com.andrea.pianocompanionroom.ui.theme.ThemeColors
 import com.andrea.pianocompanionroom.viewmodel.MidiRoomViewModel
@@ -178,14 +178,17 @@ fun SongCard(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column {
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(LocalContext.current.filesDir.path + "/" + song.name + ".jpg")
-                        .crossfade(true)
-                        .build(),
+                    model = song.albumUrl.ifBlank {
+                        ImageRequest.Builder(LocalContext.current)
+                            .data(LocalContext.current.filesDir.path + "/" + song.name + ".jpg")
+                            .crossfade(true)
+                            .build()
+                    },
                     placeholder = painterResource(id = R.drawable.ic_launcher_background),
                     contentDescription = "album cover",
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier
+                        .size(50.dp)
                         .padding(end = 8.dp),
                 )
             }

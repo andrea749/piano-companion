@@ -1,6 +1,7 @@
 package com.andrea.pianocompanionroom.data
 
 import android.util.Log
+import com.andrea.pianocompanionroom.data.model.Song
 import com.leff.midi.MidiFile
 import com.leff.midi.event.MidiEvent
 import com.leff.midi.event.NoteOff
@@ -18,6 +19,7 @@ fun convertMidiToSong(
     input: InputStream,
     songName: String = "",
     artistName: String = "",
+    albumUrl: String = "",
     ): Song {
     val midiFile = MidiFile(input)
     val noteEvents: MutableList<List<Number>> = mutableListOf()
@@ -47,6 +49,7 @@ fun convertMidiToSong(
         notes = noteEvents.toList(),
         artist = artistName,
         name = songName,
+        albumUrl = albumUrl,
         )
 }
 

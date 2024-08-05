@@ -3,7 +3,7 @@ package com.andrea.pianocompanionroom.viewmodel
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andrea.pianocompanionroom.data.Song
+import com.andrea.pianocompanionroom.data.model.Song
 import com.andrea.pianocompanionroom.data.SongsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow

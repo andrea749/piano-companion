@@ -1,4 +1,4 @@
-package com.andrea.pianocompanionroom.data
+package com.andrea.pianocompanionroom.data.model
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -19,6 +19,7 @@ data class Song(
     val name: String = "",
     val artist: String = "",
     val duration: String = "", // purely for display purposes for now
+    val albumUrl: String = "",
     val tempo: Float = 0F,
     val numOfEvents: Int = 0,
     val notes: List<List<@Serializable(with = NumberSerializer::class)Number>> = listOf()

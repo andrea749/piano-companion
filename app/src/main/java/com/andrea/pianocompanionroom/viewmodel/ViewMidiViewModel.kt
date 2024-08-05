@@ -1,14 +1,12 @@
 package com.andrea.pianocompanionroom.viewmodel
 
 import android.content.Context
-import androidx.core.content.ContextCompat.getString
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andrea.pianocompanionroom.R
 import com.andrea.pianocompanionroom.SongsApplication
 import com.andrea.pianocompanionroom.ble.BLE
-import com.andrea.pianocompanionroom.data.Song
+import com.andrea.pianocompanionroom.data.model.Song
 import com.andrea.pianocompanionroom.data.SongsRepository
 import com.andrea.pianocompanionroom.data.parseMidiFile
 import com.andrea.pianocompanionroom.view.ViewMidiDestination

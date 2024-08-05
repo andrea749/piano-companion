@@ -5,8 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.andrea.pianocompanionroom.data.model.Song
 
-@Database(entities = [Song::class], version = 2, exportSchema = false)
+@Database(entities = [Song::class], version = 3, exportSchema = false)
 @TypeConverters(MidiEventDataConverter::class)
 abstract class SongInventoryDatabase : RoomDatabase() {
     abstract fun songDao(): SongDao

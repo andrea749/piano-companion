@@ -13,10 +13,20 @@
 * no need for a network version since the user uploads files
   
 #### SongDao  
-* has all the queries. Some are provided by Room, but all the GET type of functions need custom queries.
+* has all the queries to the offline database. Some are provided by Room, but all the GET type of functions need custom queries.
   
 #### Song  
 * has a `primaryKey` (required by Room) and some fake data. `Song.notes` is of type `List<List<Number>>` since the "note" might contain ints (for pitch or velocity) or floats (for tick). `Number` is not a type that Room can automatically store in the db, so `MidiEventConverter` is required to convert this between `List<List<Number>>` <-> `String`
   
 #### MidiUtil    
-* parseMidiFile converts a MIDI file into a Song (made up mostly of strings), making it easy to store in the db.
+* parseMidiFile converts a MIDI file into a Song (made up mostly of strings), making it easy to store in the db.  
+
+
+# Retrofit
+##### Retrofit is used to make network calls to a remote database called MusicBrainz, which provides information about songs, artists, etc.  
+
+#### MusicDbRepository
+* interface between the ViewModel and the network API
+* defines the functions we'll perform on the database (get artist ID, get song ID, get release ID)
+* actual calls are created by Retrofit using functions defined in MusicDbApiService
+* information from this repository is used in MidiUploadViewModel to generate a link to an album cover 
